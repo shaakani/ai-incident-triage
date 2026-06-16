@@ -1,0 +1,4 @@
+2024-06-15 04:45:00 WARN  [finance-reporting] Replication lag detected: primary=oracle-prod-01 replica=oracle-replica-02 lag_seconds=847
+2024-06-15 04:45:30 ERROR [finance-reporting] Month-end close query failed: ORA-01555 snapshot too old: rollback segment number 15 with name "_SYSSMU15_3892847045$" too small
+2024-06-15 04:46:00 CRITICAL [finance-reporting] SOX audit trail write failure - unable to persist transaction log entry for BATCH_ID=MONTHEND-202406
+2024-06-15 04:46:10 ERROR [airflow] DAG finance_monthly_close FAILED at task=write_audit_log - see logs above

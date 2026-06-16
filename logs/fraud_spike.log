@@ -1,0 +1,5 @@
+2024-06-15 03:22:11 WARN  [fraud-detection] Anomaly score threshold breached: score=0.94 threshold=0.80 - transaction_count_1min=847 baseline=120
+2024-06-15 03:22:13 ERROR [fraud-detection] Rule engine latency spike: p99=4821ms threshold=500ms - backlog_size=12043
+2024-06-15 03:22:15 CRITICAL [fraud-detection] Kafka consumer lag critical: topic=fraud-events consumer_group=fraud-realtime lag=284710
+2024-06-15 03:22:20 ERROR [payments-gateway] High decline rate detected: decline_rate=0.38 normal_rate=0.04 window=5min
+2024-06-15 03:22:45 WARN  [fraud-detection] ML model inference timeout: model=fraud-scorer-v3 latency=9200ms max_allowed=1000ms

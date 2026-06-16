@@ -1,10 +1,6 @@
 """
-AI-Powered Incident Triage System
-Entry point for CLI usage.
-
-Usage:
-  python main.py --log logs/samples/payment_errors.log
-  python main.py --log logs/samples/fraud_spike.log
+AI-Powered Incident Triage System — CLI entry point.
+Usage: python main.py --log logs/samples/payment_errors.log
 """
 import argparse
 import sys
@@ -20,7 +16,6 @@ from triage.llm_engine import triage_logs
 from remediation.executor import execute_remediation
 
 console = Console()
-
 SEVERITY_COLORS = {"P1": "red", "P2": "yellow", "P3": "cyan", "P4": "green"}
 
 
@@ -32,21 +27,18 @@ def run_triage(log_path: str):
 
     console.rule("[bold]AI Incident Triage System[/bold]")
 
-    # Step 1: Parse logs
     with console.status(f"[cyan]Parsing logs from {path.name}...[/cyan]"):
         bundle = parse_log_file(path)
 
-    console.print(f"✓ Parsed [bold]{len(bundle.entries)}[/bold] log entries from [cyan]{bundle.source}[/cyan]")
+    console.print(f"Parsed [bold]{len(bundle.entries)}[/bold] log entries from [cyan]{bundle.source}[/cyan]")
     console.print(f"  Services: {', '.join(bundle.affected_services)}")
     console.print(f"  Errors: {bundle.error_count}  Criticals: {bundle.critical_count}\n")
 
-    # Step 2: LLM triage
     with console.status("[yellow]Running AI triage analysis...[/yellow]"):
         triage = triage_logs(bundle)
 
     color = SEVERITY_COLORS.get(triage.severity, "white")
 
-    # Display triage result
     table = Table(box=box.ROUNDED, show_header=False, padding=(0, 1))
     table.add_column("Field", style="dim", width=22)
     table.add_column("Value")
@@ -63,14 +55,13 @@ def run_triage(log_path: str):
 
     console.print(Panel(table, title="[bold]Triage Report[/bold]", border_style=color))
 
-    # Step 3: Execute remediation
     console.print("\n[bold]Executing remediation...[/bold]")
     result = execute_remediation(triage)
 
-    console.print(f"\n[green]✓ Done.[/green] Incident ID: [bold]{result.incident_id}[/bold]")
+    console.print(f"\n[green]Done.[/green] Incident ID: [bold]{result.incident_id}[/bold]")
     console.print(f"  Report: {result.report_path}")
     if result.sox_escalated:
-        console.print("[bold red]  ⚠️  SOX compliance escalation triggered[/bold red]")
+        console.print("[bold red]  SOX compliance escalation triggered[/bold red]")
 
 
 if __name__ == "__main__":

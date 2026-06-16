@@ -1,0 +1,7 @@
+2024-06-15 02:14:33 ERROR [payments-service] DB connection timeout after 30s - host=oracle-prod-01 port=1521 sid=PAYMENTSDB attempt=3/3
+2024-06-15 02:14:35 CRITICAL [payments-service] Failed to process settlement batch JOB_ID=SETTLE-20240615-0214 - 4821 transactions pending
+2024-06-15 02:14:40 ERROR [payments-service] ORA-12541: TNS:no listener - unable to connect to database
+2024-06-15 02:15:01 ERROR [billing-service] MongoDB write timeout on collection=invoices - WriteConcernError: {code: 91, errmsg: 'Replication is too stale'}
+2024-06-15 02:15:12 WARN  [collections-agent] 3 retries exhausted for customer_id=CUS-88821 payment_method=CARD txn_id=TXN-4482901
+2024-06-15 02:16:00 CRITICAL [payments-service] Java heap space: java.lang.OutOfMemoryError - pod=payments-worker-7d8f9c-xkp2q namespace=production
+2024-06-15 02:16:01 ERROR [k8s] OOMKilled: container payments-worker in pod payments-worker-7d8f9c-xkp2q exceeded memory limit 2Gi
