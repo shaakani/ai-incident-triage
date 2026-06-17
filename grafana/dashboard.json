@@ -1,0 +1,100 @@
+{
+    "__inputs": [],
+    "__requires": [],
+    "annotations": { "list": [] },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+      {
+        "datasource": { "type": "grafana", "uid": "grafana" },
+        "fieldConfig": {
+          "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] } },
+          "overrides": []
+        },
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+        "id": 1,
+        "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+        "title": "Total Incidents",
+        "type": "stat",
+        "targets": [{ "datasource": { "type": "grafana", "uid": "grafana" }, "refId": "A", "queryType": "randomWalk" }]
+      },
+      {
+        "datasource": { "type": "grafana", "uid": "grafana" },
+        "fieldConfig": {
+          "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] } },
+          "overrides": []
+        },
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+        "id": 2,
+        "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+        "title": "P1 Critical Incidents",
+        "type": "stat",
+        "targets": [{ "datasource": { "type": "grafana", "uid": "grafana" }, "refId": "A", "queryType": "randomWalk" }]
+      },
+      {
+        "datasource": { "type": "grafana", "uid": "grafana" },
+        "fieldConfig": {
+          "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }] } },
+          "overrides": []
+        },
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+        "id": 3,
+        "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+        "title": "SOX Risk Incidents",
+        "type": "stat",
+        "targets": [{ "datasource": { "type": "grafana", "uid": "grafana" }, "refId": "A", "queryType": "randomWalk" }]
+      },
+      {
+        "datasource": { "type": "grafana", "uid": "grafana" },
+        "fieldConfig": {
+          "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }] } },
+          "overrides": []
+        },
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+        "id": 4,
+        "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+        "title": "P2 Incidents",
+        "type": "stat",
+        "targets": [{ "datasource": { "type": "grafana", "uid": "grafana" }, "refId": "A", "queryType": "randomWalk" }]
+      },
+      {
+        "datasource": { "type": "grafana", "uid": "grafana" },
+        "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" } }, "overrides": [] },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+        "id": 5,
+        "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "pieType": "pie", "tooltip": { "mode": "single" } },
+        "title": "Incidents by Severity",
+        "type": "piechart",
+        "targets": [{ "datasource": { "type": "grafana", "uid": "grafana" }, "refId": "A", "queryType": "randomWalk" }]
+      },
+      {
+        "datasource": { "type": "grafana", "uid": "grafana" },
+        "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" } }, "overrides": [] },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+        "id": 6,
+        "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "pieType": "pie", "tooltip": { "mode": "single" } },
+        "title": "Incidents by Category",
+        "type": "piechart",
+        "targets": [{ "datasource": { "type": "grafana", "uid": "grafana" }, "refId": "A", "queryType": "randomWalk" }]
+      },
+      {
+        "datasource": { "type": "grafana", "uid": "grafana" },
+        "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2 } }, "overrides": [] },
+        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
+        "id": 7,
+        "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "single" } },
+        "title": "Incident Trend Over Time",
+        "type": "timeseries",
+        "targets": [{ "datasource": { "type": "grafana", "uid": "grafana" }, "refId": "A", "queryType": "randomWalk" }]
+      }
+    ],
+    "refresh": "30s",
+    "schemaVersion": 38,
+    "tags": ["payments", "incidents", "production-support"],
+    "title": "AI Incident Triage — Operations Dashboard",
+    "uid": "ai-triage-ops",
+    "version": 1
+  }
