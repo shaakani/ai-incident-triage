@@ -30,26 +30,47 @@ Error Logs → Log Parser → Claude LLM Triage → Remediation Executor → Mon
 ai-incident-triage/
 
 ├── triage/
+
 │   ├── log_parser.py       # Log ingestion & normalisation
+
 │   └── llm_engine.py       # Claude API — structured triage output
+
 ├── remediation/
+
 │   ├── actions.py          # 7 remediation action types
+
 │   └── executor.py         # Action selection & execution
+
 ├── storage/
+
 │   └── mongo_store.py      # MongoDB persistence layer
+
 ├── dashboard/
+
 │   └── app.py              # Streamlit live dashboard
+
 ├── airflow/
+
 │   └── dags/
+
 │       └── triage_pipeline.py  # Airflow DAG — runs every 5 mins
+
 ├── grafana/
+
 │   └── dashboard.json      # Grafana operations dashboard
+
 ├── scripts/
+
 │   ├── setup.sh            # One-command project setup
+
 │   └── watch_logs.sh       # Auto-trigger triage on new log files
+
 ├── logs/                   # Sample Payments/Finance error scenarios
+
 ├── tests/                  # 8 unit tests
+
 ├── Makefile                # One-command shortcuts
+
 └── main.py                 # CLI entry point
 
 ---
