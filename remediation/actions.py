@@ -9,11 +9,20 @@ INCIDENT_DIR = Path("incidents")
 
 
 def _write_incident_report(action: str, result: dict, triage: dict) -> str:
+    """Save incident to MongoDB and also keep a local JSON backup."""
+    # Save to MongoDB
+    try:
+        from storage.mongo_store import save_incident
+        incident_id = save_incident(action, result, triage)
+    except Exception as e:
+        print(f"  [MongoDB] Warning: could not save to MongoDB: {e}")
+        incident_id = f"INC-{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+    # Keep local JSON backup as well
     INCIDENT_DIR.mkdir(exist_ok=True)
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = INCIDENT_DIR / f"INC-{ts}-{triage.get('severity','P2')}.json"
+    filename = INCIDENT_DIR / f"{incident_id}-{triage.get('severity','P2')}.json"
     report = {
-        "incident_id": f"INC-{ts}",
+        "incident_id": incident_id,
         "created_at": datetime.now().isoformat(),
         "triage": triage,
         "action_taken": action,
