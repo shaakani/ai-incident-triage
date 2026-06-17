@@ -155,14 +155,36 @@ if st.session_state["triage_result"]:
             )
 
 # ── Incident history ──────────────────────────────────────────────────────────
-incident_dir = Path("incidents")
-if incident_dir.exists():
-    incidents = sorted(incident_dir.glob("*.json"), reverse=True)
+st.divider()
+try:
+    from storage.mongo_store import get_incidents, get_incident_stats
+    stats = get_incident_stats()
+    incidents = get_incidents(limit=10)
+
+    st.subheader("Incident History")
+
+    s1, s2, s3, s4 = st.columns(4)
+    s1.metric("Total Incidents", stats["total"])
+    s2.metric("P1 Incidents", stats["p1"])
+    s3.metric("P2 Incidents", stats["p2"])
+    s4.metric("SOX Risk", stats["sox_risk"])
+
     if incidents:
-        st.divider()
-        st.subheader(f"Incident History ({len(incidents)} incidents)")
-        for inc_file in incidents[:10]:
-            data = json.loads(inc_file.read_text())
-            t = data["triage"]
-            with st.expander(f"{inc_file.stem} — {t.get('title','Unknown')} [{t.get('severity','?')}]"):
-                st.json(data)
+        for inc in incidents:
+            label = f"{inc.get('incident_id','?')} — {inc.get('title','Unknown')} [{inc.get('severity','?')}]"
+            with st.expander(label):
+                st.json(inc)
+    else:
+        st.info("No incidents yet — run a triage to see history here")
+
+except Exception as e:
+    st.info(f"MongoDB not connected — {e}")
+    incident_dir = Path("incidents")
+    if incident_dir.exists():
+        incidents = sorted(incident_dir.glob("*.json"), reverse=True)
+        if incidents:
+            for inc_file in incidents[:10]:
+                data = json.loads(inc_file.read_text())
+                t = data["triage"]
+                with st.expander(f"{inc_file.stem} — {t.get('title','Unknown')} [{t.get('severity','?')}]"):
+                    st.json(data)
