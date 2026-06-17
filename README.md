@@ -3,91 +3,54 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
 [![Claude Sonnet](https://img.shields.io/badge/LLM-Claude%20Sonnet-orange.svg)](https://www.anthropic.com/)
 [![Streamlit](https://img.shields.io/badge/dashboard-Streamlit-red.svg)](https://streamlit.io/)
+[![Airflow](https://img.shields.io/badge/orchestration-Airflow-017CEE.svg)](https://airflow.apache.org/)
+[![MongoDB](https://img.shields.io/badge/database-MongoDB-47A248.svg)](https://www.mongodb.com/)
+[![Grafana](https://img.shields.io/badge/monitoring-Grafana-F46800.svg)](https://grafana.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> An end-to-end production support automation system that ingests error logs, uses Claude (LLM) to diagnose incidents, and triggers automated remediation — designed for Payments, Billing, and Finance platforms.
+> An end-to-end production incident response platform that reads error logs, uses Claude LLM to diagnose issues, executes automated remediation, stores incidents in MongoDB, visualises trends in Grafana, and runs on a scheduled Airflow pipeline.
 
 ---
 
 ## What it does
-Error Logs → Log Parser → Claude LLM Triage → Remediation Executor → Incident Report
+
+Error Logs → Log Parser → Claude LLM Triage → Remediation Executor → MongoDB → Grafana
 
 1. **Ingests** raw log files from Payments, Billing, Collections, and Finance services
 2. **Diagnoses** root cause, severity (P1–P4), blast radius, and SOX compliance risk using Claude
 3. **Executes** automated remediation — pod restarts, scaling, DBA escalation, on-call paging
-4. **Persists** structured incident reports for audit trails and post-mortems
+4. **Stores** every incident in MongoDB for querying and audit trails
+5. **Visualises** incident trends and severity breakdown in Grafana
+6. **Schedules** the full pipeline automatically every 5 minutes via Apache Airflow
 
 ---
 
-## Demo
-
-### CLI
-```bash
-python main.py --log logs/payment_errors.log
-```
-
-### Output
-Parsed 7 log entries from payment_errors.log
-
-Services: payments-service, billing-service, collections-agent, k8s
-Severity : P1
-
-Category : database
-
-Title    : Payment Settlement Batch Failing Due to DB Outage and OOM
-
-SOX Risk : YES
-
-Confidence : 91%
-
-Action   : page_oncall
-Incident report saved: incidents/INC-20260616_222253-P1.json
-
----
-
-## Project Structure
+## Architecture
 
 ai-incident-triage/
 
 ├── triage/
-
-│   ├── log_parser.py      # Log ingestion & normalisation
-
-│   └── llm_engine.py      # Claude API integration & structured triage
-
+│   ├── log_parser.py       # Log ingestion & normalisation
+│   └── llm_engine.py       # Claude API — structured triage output
 ├── remediation/
-
-│   ├── actions.py         # Remediation action library
-
-│   └── executor.py        # Action selection & execution
-
+│   ├── actions.py          # 7 remediation action types
+│   └── executor.py         # Action selection & execution
+├── storage/
+│   └── mongo_store.py      # MongoDB persistence layer
 ├── dashboard/
-
-│   └── app.py             # Streamlit live dashboard
-
-├── logs/
-
-│   ├── payment_errors.log       # Oracle DB timeout + OOM kill scenario
-
-│   ├── fraud_spike.log          # Fraud detection anomaly scenario
-
-│   └── db_replication_lag.log   # SOX audit trail failure scenario
-
-├── tests/
-
-│   ├── test_parser.py     # Log parser unit tests
-
-│   └── test_triage.py     # Triage engine unit tests (mocked)
-
-├── conftest.py            # Pytest configuration
-
-├── main.py                # CLI entry point
-
-├── requirements.txt
-
-├── .env.example
-
-└── .gitignore
+│   └── app.py              # Streamlit live dashboard
+├── airflow/
+│   └── dags/
+│       └── triage_pipeline.py  # Airflow DAG — runs every 5 mins
+├── grafana/
+│   └── dashboard.json      # Grafana operations dashboard
+├── scripts/
+│   ├── setup.sh            # One-command project setup
+│   └── watch_logs.sh       # Auto-trigger triage on new log files
+├── logs/                   # Sample Payments/Finance error scenarios
+├── tests/                  # 8 unit tests
+├── Makefile                # One-command shortcuts
+└── main.py                 # CLI entry point
 
 ---
 
@@ -95,46 +58,46 @@ ai-incident-triage/
 
 | Layer | Technology |
 |---|---|
-| LLM | Claude Sonnet (Anthropic) |
+| LLM | Claude Sonnet (Anthropic API) |
 | Language | Python 3.11+ |
 | Dashboard | Streamlit |
-| CLI output | Rich |
+| Orchestration | Apache Airflow |
+| Database | MongoDB + pymongo |
+| Monitoring | Grafana |
+| CLI | Rich |
 | Testing | Pytest |
-| Log targets | Payments, Billing, Finance, Fraud, Airflow |
-| Databases covered | Oracle PL/SQL, MongoDB |
 
 ---
 
 ## Quick Start
 
 ```bash
-# 1. Clone the repo
+# 1. Clone and setup
 git clone https://github.com/shaakani/ai-incident-triage.git
 cd ai-incident-triage
+make setup
 
-# 2. Create and activate virtual environment
-python3 -m venv venv
-source venv/bin/activate
+# 2. Add your Anthropic API key
+echo "ANTHROPIC_API_KEY=sk-ant-..." >> .env
 
-# 3. Install dependencies
-pip install -r requirements.txt
+# 3. Run triage on a sample log
+make run
 
-# 4. Add your Anthropic API key
-cp .env.example .env
-# Edit .env and add your key: ANTHROPIC_API_KEY=sk-ant-...
+# 4. Launch the dashboard
+make dashboard
 
-# 5. Run triage on a sample log
-python main.py --log logs/payment_errors.log
+# 5. Start Airflow scheduler
+make airflow
 
-# 6. Launch the dashboard
-streamlit run dashboard/app.py
+# 6. Watch for new logs automatically
+make watch
 ```
 
 ---
 
 ## Sample Scenarios
 
-| Log file | Scenario | Expected triage |
+| Log file | Scenario | Triage output |
 |---|---|---|
 | `logs/payment_errors.log` | Oracle DB timeout + OOM kill | P1 · page_oncall · SOX risk |
 | `logs/fraud_spike.log` | Fraud detection anomaly + Kafka lag | P1 · page_oncall |
@@ -176,13 +139,26 @@ streamlit run dashboard/app.py
 
 ---
 
+## Makefile Commands
+
+```bash
+make setup      # Install dependencies and set up project
+make run        # Triage the sample payment_errors.log
+make triage LOG=logs/fraud_spike.log   # Triage any log file
+make test       # Run all 8 unit tests
+make dashboard  # Launch Streamlit dashboard
+make airflow    # Start Airflow scheduler
+make watch      # Watch logs folder for new files
+```
+
+---
+
 ## Running Tests
 
 ```bash
 pytest tests/ -v
+# Expected: 8 passed
 ```
-
-Expected output: **8 passed**
 
 ---
 
@@ -192,10 +168,13 @@ Expected output: **8 passed**
 |---|---|
 | Incident response & triage | Automated log → diagnosis → action pipeline |
 | AI/ML in production ops | LLM-based root cause analysis and decision making |
-| Observability tooling | Structured parsing of Splunk/Grafana format logs |
+| Apache Airflow | Scheduled DAG running every 5 minutes |
+| MongoDB / NoSQL | Full incident persistence with querying |
+| Observability tooling | Grafana dashboard with live incident metrics |
 | SOX compliance | Auto-detection and escalation of compliance risk |
-| Payments & Finance platforms | Scenarios cover Oracle, MongoDB, Kafka, Airflow |
-| Automation & MTTR reduction | Auto-remediation reduces manual intervention |
+| Payments & Finance platforms | Oracle, MongoDB, Kafka, Airflow error scenarios |
+| Shell scripting & Linux | Bash scripts and Makefile automation |
+| Automation & MTTR reduction | End-to-end pipeline with no manual steps |
 
 ---
 
